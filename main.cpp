@@ -5,7 +5,8 @@
 //config
 int MOVE_AMOUNT = 10;
 int MOVE_DELAY = 50;
-int PROGRAM_DELAY = 8000;
+int MOUSE_CHECK_DELAY = 10;
+int PROGRAM_DELAY = 8500;
 
 char KEY_BREAK = 'S';
 int KEY_DELAY = 2500;
@@ -30,6 +31,26 @@ void checkKey() {
 	}
 }
 
+void progSleep(int amount, int checkMouseDelay) {
+
+	while (true) {
+
+		POINT mousepos;
+		GetCursorPos(&mousepos);
+
+		for (int i = 0; i < (amount / checkMouseDelay); i++) {
+			POINT newmousepos;
+			GetCursorPos(&newmousepos);
+			if (newmousepos.x != mousepos.x || newmousepos.y != mousepos.y)break;
+			Sleep(checkMouseDelay);
+			if (i == (amount / checkMouseDelay) - 1)return;
+		}
+
+
+	}
+
+}
+
 void moveMouse(int amount, int time) {
 	POINT point;
 	GetCursorPos(&point);
@@ -50,7 +71,7 @@ void moveMouse(int amount, int time) {
 int main(void) {
 	thread th(checkKey);
 	while (true) {
-		Sleep(PROGRAM_DELAY);
+		progSleep(PROGRAM_DELAY, MOUSE_CHECK_DELAY);
 		moveMouse(MOVE_AMOUNT, MOVE_DELAY);
 	}
 
